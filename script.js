@@ -71,11 +71,22 @@
   const submitLabel = submitButton.innerHTML;
   let sending = false;
 
+  const doctorPreferences = [...form.querySelectorAll('input[name="doctor_pref"]')];
+  const doctorName = form.elements["doctor_name"];
+  function updateDoctorNameRequired() {
+    doctorName.required = form.elements["doctor_pref"].value === "希望あり";
+  }
+  doctorPreferences.forEach((input) => input.addEventListener("change", updateDoctorNameRequired));
+  updateDoctorNameRequired();
+
   async function submitForm(event) {
     event.preventDefault();
     if (sending) return;
     dateFields.forEach((input) => { input.required = true; });
-    ["time_1", "time_2", "time_3", "clinic"].forEach((name) => { form.elements[name].required = true; });
+    ["time_1", "time_2", "time_3", "clinic", "treatment", "doctor_pref", "same_day"].forEach((name) => {
+      form.querySelectorAll(`[name="${name}"]`).forEach((input) => { input.required = true; });
+    });
+    updateDoctorNameRequired();
     if (!form.reportValidity()) return;
 
     // 通知先はWeb3Forms側の登録先。選択院に対応するキーだけを使います。
@@ -96,6 +107,7 @@
 
     const raw = new FormData(form);
     const sources = raw.getAll("source");
+    const doctor_pref = raw.get("doctor_pref");
 
     // フィールド名の文字化けを防ぐため、メール本文を日本語ラベル付きの1テキストにまとめます。
     const lines = [
@@ -109,6 +121,9 @@
       `第2希望日: ${raw.get("day_2") || ""} ${raw.get("time_2") || ""}`,
       `第3希望日: ${raw.get("day_3") || ""} ${raw.get("time_3") || ""}`,
       `ご連絡希望時間帯: ${raw.get("contact_time") || ""}`,
+      `ご希望の施術内容: ${raw.get("treatment") || ""}`,
+      `ご希望医師: ${doctor_pref === "希望あり" ? `希望あり（${raw.get("doctor_name") || ""}先生）` : (doctor_pref || "")}`,
+      `当日のご希望: ${raw.get("same_day") || ""}`,
       `どこで知りましたか: ${sources.length ? sources.join("、") : ""}`,
       `症例モニター: ${raw.get("monitor") || ""}`,
       `お問い合わせ内容: ${raw.get("message") || ""}`,

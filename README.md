@@ -1,3 +1,4 @@
+元: bline-clinic/glamorous.LP を 2026-11-15 に複製・以後は本リポが正本
 # B-LINE グラマラスラインLP
 
 画像10枚と、11枚目の予約フォームで構成した横スライドLPです。HTML / CSS / JavaScriptのみで動作し、ビルドは不要です。
