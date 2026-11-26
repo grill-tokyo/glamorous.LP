@@ -106,13 +106,11 @@
     status.textContent = "";
 
     const raw = new FormData(form);
-    const sources = raw.getAll("source");
     const doctor_pref = raw.get("doctor_pref");
 
     // フィールド名の文字化けを防ぐため、メール本文を日本語ラベル付きの1テキストにまとめます。
     const lines = [
       `ご予約院: ${raw.get("clinic") || ""}`,
-      `ご来院: ${raw.get("visit_type") || ""}`,
       `お名前（カタカナ）: ${raw.get("name_kana") || ""}`,
       `年齢: ${raw.get("age") || ""}歳`,
       `メールアドレス: ${raw.get("email") || ""}`,
@@ -120,12 +118,9 @@
       `第1希望日: ${raw.get("day_1") || ""} ${raw.get("time_1") || ""}`,
       `第2希望日: ${raw.get("day_2") || ""} ${raw.get("time_2") || ""}`,
       `第3希望日: ${raw.get("day_3") || ""} ${raw.get("time_3") || ""}`,
-      `ご連絡希望時間帯: ${raw.get("contact_time") || ""}`,
       `ご希望の施術内容: ${raw.get("treatment") || ""}`,
       `ご希望医師: ${doctor_pref === "希望あり" ? `希望あり（${raw.get("doctor_name") || ""}先生）` : (doctor_pref || "")}`,
       `当日のご希望: ${raw.get("same_day") || ""}`,
-      `どこで知りましたか: ${sources.length ? sources.join("、") : ""}`,
-      `症例モニター: ${raw.get("monitor") || ""}`,
       `お問い合わせ内容: ${raw.get("message") || ""}`,
     ];
 
